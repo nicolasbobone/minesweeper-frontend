@@ -1,0 +1,166 @@
+@if (!loading && !error) {
+<div class="container mx-auto py-8">
+  <h1 class="text-4xl font-extrabold mb-8 text-gray-900 dark:text-gray-50 text-center">Game History</h1>
+
+  <div class="shadow-md rounded-lg overflow-hidden">
+    <table class="min-w-full bg-white dark:bg-gray-800">
+      <thead>
+        <tr class="bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 uppercase text-sm leading-normal">
+          <th
+            id="startDateHeader"
+            class="py-3 px-6 text-left cursor-pointer"
+            (click)="sortBy('startDate')"
+            (keypress)="sortBy('startDate')"
+          >
+            Start Date
+            <span class="inline-block ml-2">⇅</span>
+          </th>
+          <th
+            id="endDateHeader"
+            class="py-3 px-6 text-left cursor-pointer"
+            (click)="sortBy('endDate')"
+            (keypress)="sortBy('endDate')"
+          >
+            End Date
+            <span class="inline-block ml-2">⇅</span>
+          </th>
+          <th
+            id="totalTimeHeader"
+            class="py-3 px-6 text-left cursor-pointer"
+            (click)="sortBy('totalTime')"
+            (keypress)="sortBy('totalTime')"
+          >
+            Total Time
+            <span class="inline-block ml-2">⇅</span>
+          </th>
+          <th
+            id="resultHeader"
+            class="py-3 px-6 text-left cursor-pointer"
+            (click)="sortBy('result')"
+            (keypress)="sortBy('result')"
+          >
+            Result
+            <span class="inline-block ml-2">⇅</span>
+          </th>
+          <th
+            id="statusHeader"
+            class="py-3 px-6 text-left cursor-pointer"
+            (click)="sortBy('status')"
+            (keypress)="sortBy('status')"
+          >
+            Status
+            <span class="inline-block ml-2">⇅</span>
+          </th>
+          <th
+            id="difficultyHeader"
+            class="py-3 px-6 text-left cursor-pointer"
+            (click)="sortBy('difficulty')"
+            (keypress)="sortBy('difficulty')"
+          >
+            Difficulty
+            <span class="inline-block ml-2">⇅</span>
+          </th>
+        </tr>
+
+        <tr class="bg-gray-100 dark:bg-gray-800">
+          <th class="py-2 px-6" scope="col">
+            <input
+              type="datetime-local"
+              [(ngModel)]="filters.startDate"
+              class="w-full bg-transparent text-gray-900 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none"
+              (change)="onFilterChange()"
+            />
+          </th>
+          <th class="py-2 px-6" scope="col">
+            <input
+              type="datetime-local"
+              [(ngModel)]="filters.endDate"
+              class="w-full bg-transparent text-gray-900 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none"
+              (change)="onFilterChange()"
+            />
+          </th>
+          <th class="py-2 px-6" scope="col">
+            <input
+              type="number"
+              [(ngModel)]="filters.totalTime"
+              placeholder="Time (s)"
+              class="w-full bg-transparent text-gray-900 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none"
+              (change)="onFilterChange()"
+            />
+          </th>
+          <th class="py-2 px-6" scope="col">
+            <select
+              [(ngModel)]="filters.result"
+              class="w-full bg-transparent text-gray-900 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none"
+              (change)="onFilterChange()"
+            >
+              <option value="">All</option>
+              <option value="WIN">WIN</option>
+              <option value="LOSE">LOSE</option>
+            </select>
+          </th>
+          <th class="py-2 px-6" scope="col">
+            <select
+              [(ngModel)]="filters.status"
+              class="w-full bg-transparent text-gray-900 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none"
+              (change)="onFilterChange()"
+            >
+              <option value="">All</option>
+              <option value="IN_PROGRESS">IN_PROGRESS</option>
+              <option value="FINISHED">FINISHED</option>
+            </select>
+          </th>
+          <th class="py-2 px-6" scope="col">
+            <select
+              [(ngModel)]="filters.difficulty"
+              class="w-full bg-transparent text-gray-900 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none"
+              (change)="onFilterChange()"
+            >
+              <option value="">All</option>
+              <option value="EASY">EASY</option>
+              <option value="MEDIUM">MEDIUM</option>
+              <option value="HARD">HARD</option>
+            </select>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let game of gamesPlayed" class="border-b hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+          <td class="py-4 px-6 text-gray-900 dark:text-gray-300">
+            {{ game.startDate | date : 'yyyy-MM-dd HH:mm:ss' }}
+          </td>
+          <td class="py-4 px-6 text-gray-900 dark:text-gray-300">
+            {{ game.endDate ? (game.endDate | date : 'yyyy-MM-dd HH:mm:ss') : 'N/A' }}
+          </td>
+          <td class="py-4 px-6 text-gray-900 dark:text-gray-300">{{ game.totalTime }}s</td>
+          <td class="py-4 px-6 text-gray-900 dark:text-gray-300">{{ game.result || 'N/A' }}</td>
+          <td class="py-4 px-6 text-gray-900 dark:text-gray-300">{{ game.status }}</td>
+          <td class="py-4 px-6 text-gray-900 dark:text-gray-300">{{ game.difficulty }}</td>
+        </tr>
+
+        <tr *ngIf="gamesPlayed.length === 0">
+          <td colspan="6" class="text-center py-6 text-gray-600 dark:text-gray-300">No games found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+} @if (loading && !error){
+<app-spinner />
+} @if(error) {
+<div class="flex flex-col items-center justify-center h-full">
+  <div
+    class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-6 py-8 rounded-lg max-w-md text-center shadow-lg"
+  >
+    <h2 class="text-3xl font-semibold mb-4">Oops, something went wrong!</h2>
+    <p class="mb-6 text-gray-600 dark:text-gray-400">We encountered an issue. Please try again in a moment.</p>
+    <button
+      (click)="reloadPage()"
+      class="bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition-all duration-200"
+    >
+      Try Again
+    </button>
+  </div>
+</div>
+}

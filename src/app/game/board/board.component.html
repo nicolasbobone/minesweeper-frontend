@@ -1,0 +1,85 @@
+@if (!loading && !error) {
+<div class="flex justify-center items-center h-full bg-white dark:bg-gray-900 w-auto">
+  <div class="text-center">
+    <div
+      class="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-4 mb-4 rounded-lg shadow-lg border border-gray-300 dark:border-gray-600"
+    >
+      <div
+        class="bg-gray-200 dark:bg-gray-900 text-green-500 text-3xl font-mono px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 w-20 text-center"
+      >
+        {{ currentGame.minesCount - flagsCount }}
+      </div>
+      <button
+        (click)="resetGame()"
+        [disabled]="!gameStarted"
+        (mouseover)="gameStarted && currentGame.status === 'IN_PROGRESS' ? (emoji = '🫣') : emoji"
+        (mouseleave)="emoji = gameStarted && currentGame.status === 'IN_PROGRESS' ? '😃' : emoji"
+        class="text-4xl p-3"
+        [ngClass]="{
+          'hover:scale-110 transition-transform transform duration-200':
+            gameStarted || currentGame.status === 'FINISHED'
+        }"
+      >
+        {{ emoji }}
+      </button>
+      <div
+        class="bg-gray-200 dark:bg-gray-900 text-green-500 text-3xl font-mono px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 w-20 text-center"
+      >
+        {{ currentGame.totalTime }}
+      </div>
+    </div>
+    <div
+      class="grid gap-1.5 bg-gray-100 dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700"
+      [ngStyle]="{
+        'grid-template-columns': 'repeat(' + currentGame.columns + ', 3rem)',
+        'grid-template-rows': 'repeat(' + currentGame.rows + ', 3rem)'
+      }"
+    >
+      <button
+        [disabled]="currentGame.status === 'FINISHED'"
+        class="w-12 h-12 flex items-center justify-center text-gray-800 dark:text-white focus:outline-none shadow-md hover:shadow-lg transition-all duration-150"
+        *ngFor="let cell of currentGame.cells; let i = index"
+        [ngClass]="{
+          'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600': !cell.isRevealed && !cell.isFlag,
+          'bg-green-500': cell.isRevealed && !cell.isMine,
+          'bg-red-600': cell.isRevealed && cell.isMine,
+          'text-gray-200': cell.adjacentMines > 0,
+          'bg-yellow-400 dark:bg-yellow-500': cell.isFlag
+        }"
+        (click)="revealCell(cell, i)"
+        (contextmenu)="onRightClick($event, cell)"
+        [disabled]="cell.isRevealed"
+      >
+        <span *ngIf="cell.isRevealed && !cell.isMine && cell.adjacentMines > 0">{{ cell.adjacentMines }}</span>
+        <span *ngIf="cell.isRevealed && cell.isMine">💣</span>
+        <span *ngIf="cell.isFlag && !cell.isRevealed">🚩</span>
+      </button>
+    </div>
+    <button
+      [disabled]="savedGame"
+      (click)="saveGame()"
+      type="button"
+      class="w-full bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition duration-300 ease-in-out disabled:bg-gray-400 disabled:dark:bg-gray-600 disabled:cursor-not-allowed disabled:hover:bg-gray-400 disabled:dark:hover:bg-gray-600"
+    >
+      Save Game
+    </button>
+  </div>
+</div>
+} @if (loading && !error){
+<app-spinner />
+}@if(error) {
+<div class="flex flex-col items-center justify-center h-full">
+  <div
+    class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-6 py-8 rounded-lg max-w-md text-center shadow-lg"
+  >
+    <h2 class="text-3xl font-semibold mb-4">Oops, something went wrong!</h2>
+    <p class="mb-6 text-gray-600 dark:text-gray-400">We encountered an issue. Please try again in a moment.</p>
+    <button
+      (click)="reloadPage()"
+      class="bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition-all duration-200"
+    >
+      Try Again
+    </button>
+  </div>
+</div>
+}
